@@ -1,0 +1,35 @@
+.App {
+  text-align: center;
+}
+
+.countdown-component__container {
+    display: inline-block;
+    border: 1px solid blue;
+    margin: 0 1px 0 1px;
+    background-color:  #479be2;
+    color: gold;
+    padding: 2px;
+}
+
+.countdown-component__measurement {
+    font-weight: 700;
+    font-size: 200%;
+}
+
+.countdown-component__container-left {
+    border-radius: 7px 0 0 7px;
+}
+
+.countdown-component__container-right {
+    border-radius: 0 7px 7px 0;
+}
+
+.countdown-component__event-name {
+    font-weight: 700;
+    font-size: 200%;
+    margin: 10px 0;
+}
+
+.countdown-component__time-components {
+    margin-top: 15px;
+}
