@@ -19,7 +19,8 @@ class CountDownComponent extends React.Component {
          seconds: 0
        },
        eventName: '',
-       showEventNameInput: true
+       showEventNameInput: true,
+       clockTimeFormat: 'clockreal'
      };
      this.secondsDurationMeasurements = {
          daysInSeonds:  60*60*24,
@@ -27,7 +28,7 @@ class CountDownComponent extends React.Component {
          minutesInSeconds: 60,
      };
      this.setFutureDate = this.setFutureDate.bind(this);
-     this.setEventName = this.setEventName.bind(this);
+     this.handleChange = this.handleChange.bind(this);
      this.toggleEventNameLabel = this.toggleEventNameLabel.bind(this);
      this.toggleEventNameInputLabel = this.toggleEventNameInputLabel.bind(this);
   }
@@ -70,8 +71,11 @@ class CountDownComponent extends React.Component {
     this.setState({ dateDiff });
   }
 
-  setEventName(event) {
-      this.setState({eventName: event.target.value });
+  handleChange({ target }) {
+      const { name, value } = target;
+      this.setState({
+          [ name ]: value
+      });
   }
 
   toggleEventNameLabel() {
@@ -88,14 +92,32 @@ class CountDownComponent extends React.Component {
     }
   }
 
+  handleSelectTimeFormatChange(event) {
+
+  }
+
   componentWillUnmount() {
     clearInterval(this.intervalId);
   }
 
   render() {
     const { days, hours, minutes, seconds } = this.state.dateDiff;
-    const showEventNameInput = this.state.showEventNameInput
+    const showEventNameInput = this.state.showEventNameInput;
+    const clockTimeFormat  = this.state.clockTimeFormat;
     const hasDays = days >= 0;
+    const clockReal = <div className="countdown-component__time-components">
+                        <CountdownTimeComponent measurement={days} timeMetric='days' additionalClassName='countdown-component__container-left'/>
+                        <CountdownTimeComponent measurement={hours} timeMetric='hours'/>
+                        <CountdownTimeComponent measurement={minutes} timeMetric='minutes'/>
+                        <CountdownTimeComponent measurement={seconds} timeMetric='seconds' additionalClassName='countdown-component__container-right'/>
+                      </div>;
+    const clockText = <div> {days} days, {hours} hours, {minutes} minutes, {seconds} seconds </div>;
+    let clockRenderer;
+    if (clockTimeFormat === 'clocktext') {
+        clockRenderer = clockText;
+    } else {
+        clockRenderer = clockReal;
+    }
     return (
       <div className='countdown-clock--container'>
         <div className='countdown-clock--component'>
@@ -112,14 +134,18 @@ class CountDownComponent extends React.Component {
         </div>
         { hasDays &&
           <div>
-              { showEventNameInput && <input type='text' value={this.state.eventName} onChange={this.setEventName} onBlur={this.toggleEventNameInputLabel(false)} placeHolder='Enter event name' className='countdown-component__event-name' /> }
+              { showEventNameInput && <input type='text' name='eventName' value={this.state.eventName} onChange={this.handleChange} onBlur={this.toggleEventNameInputLabel(false)} placeHolder='Enter event name' className='countdown-component__event-name' /> }
               { !showEventNameInput && <label className='countdown-component__event-name' onClick={this.toggleEventNameInputLabel(true)} >{this.state.eventName}</label> }
-              <div className="countdown-component__time-components">
-                <CountdownTimeComponent measurement={days} timeMetric='days' additionalClassName='countdown-component__container-left'/>
-                <CountdownTimeComponent measurement={hours} timeMetric='hours'/>
-                <CountdownTimeComponent measurement={minutes} timeMetric='minutes'/>
-                <CountdownTimeComponent measurement={seconds} timeMetric='seconds' additionalClassName='countdown-component__container-right'/>
+              <div>
+              <label>
+                 Please select clock count down time format :
+                 <select name='clockTimeFormat' value={clockTimeFormat} onChange={this.handleChange}>
+                   <option value="clockreal">Clock Real</option>
+                   <option value="clocktext">Clock text</option>
+                 </select>
+               </label>
               </div>
+              {clockRenderer}
           </div>
         }
       </div>
